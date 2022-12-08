@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InputCode } from "../inputCode";
 import { ShowName } from "../showNames";
 import axios from "axios";
@@ -8,6 +8,7 @@ export const Body = () => {
   const [view, setView] = useState(false);
   const [timeFlag, setTimeflag] = useState(false);
   const [data, setData] = useState<any[]>([]);
+  const timer = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     if (view && !timeFlag) {
       axios("https://api.github.com/repos/elixir-lang/elixir/issues")
@@ -21,14 +22,15 @@ export const Body = () => {
         })
         .catch((error) => {})
         .finally(() => {});
+
       setTimeflag(true);
-      setTimeout(() => {
+      timer.current = setTimeout(() => {
         setView(false);
       }, 15000);
     } else if (!view) {
       setTimeflag(false);
       setData([]);
-      return clearTimeout(0);
+      return () => clearTimeout(timer.current as NodeJS.Timeout);
     }
   }, [timeFlag, view]);
   return (
