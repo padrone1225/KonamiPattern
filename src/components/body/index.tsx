@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { InputCode } from "../inputCode";
-import { ShowName } from "../showNames";
+import { InputCode } from "./inputCode";
+import { ShowName } from "./showNames";
 import axios from "axios";
 import "./index.css";
 
@@ -14,10 +14,12 @@ export const Body = () => {
       axios("https://api.github.com/repos/elixir-lang/elixir/issues")
         .then((response) => {
           let list: any[] = [];
-          response.data.map((data: any, index: number) =>
-            list.push(data.author_association)
+          console.log(response.data);
+          response.data.map((data: any) =>
+            list.push([data.user.login, data.node_id])
           );
           list = list.splice(0, 5);
+          console.log("LIST", list);
           setData(list);
         })
         .catch((error) => {})
